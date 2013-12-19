@@ -2,10 +2,14 @@ H=56;
 W=18;
 L=22;
 
-threaded_D=10;
-plain_D=8;
+threaded_Y_D=10.5;
+threaded_X_D=8.5;
+plain_D=8.2;
 
 fillet=3;
+
+support=1;
+supported_angle=55;
 
 include <write/Write.scad>
 
@@ -21,6 +25,20 @@ module fillet(r, h, pos, rot)
 			cylinder(r=r, h=h+2, center=true);
 		}
 }
+
+sca=supported_angle;
+module supported_cylinder(r=1,h=1,z_rot=0, center=false)
+{
+	union()
+	{
+		cylinder(r=r,h=h,center=center);
+		if(support)
+		rotate([0,0,z_rot])
+		linear_extrude(height=h, center=center)
+			polygon([[r*sin(sca),r*cos(sca)], [r, r*(cos(sca)-tan(sca)*(1-sin(sca)))], [r, -r*(cos(sca)-tan(sca)*(1-sin(sca)))],[r*sin(sca),-r*cos(sca)]]);
+	}
+}
+
 
 module sphere_fillet(r,pos,rot)
 {
@@ -43,10 +61,10 @@ module Y_corner()
 		for(i=[0,1])
 			translate([L/2, -1, 12+22*i])
 				rotate([-90,0,0])
-					cylinder(r=threaded_D/2, h=W+2);
+					supported_cylinder(r=threaded_X_D/2, h=W+2, z_rot=180);
 		translate([-1, W/2, 23])
 			rotate([0,90,0])
-				cylinder(r=threaded_D/2, h=L+2);
+				cylinder(r=threaded_Y_D/2, h=L+2);
 		translate([0, W/2, 54])
 			rotate([0,90,0])
 			{
