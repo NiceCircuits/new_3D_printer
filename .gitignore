@@ -6,3 +6,4 @@
 lockfile.lck
 OldVersions
 Imported Components
+*.gcode
